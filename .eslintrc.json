@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "airbnb",
+    "prettier",
+  ],
+  "plugins": [
+    "prettier",
+  ],
+  "globals": {
+    "window": false,
+    "document": false,
+    "FormData": false,
+  },
+  "rules": {
+    "react/forbid-prop-types": "false",
+  }
+}
