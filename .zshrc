@@ -3,7 +3,7 @@
 echo running zshrc
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/tyler.haas/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 ZSH_THEME="lambda-mod"
@@ -61,7 +61,6 @@ ZSH_THEME="lambda-mod"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
-  zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh

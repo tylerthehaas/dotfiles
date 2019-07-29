@@ -119,9 +119,6 @@ export EDITOR=vim
 export VISUAL=vim
 alias vim='/usr/local/bin/vim'
 
-# ctags
-alias ctags="`brew --prefix`/bin/ctags"
-
 # Yarn
 # export PATH="$PATH:`yarn global bin`:$HOME/.config/yarn/global/node_modules/.bin"
 
