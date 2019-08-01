@@ -55,7 +55,6 @@ alias bigdirs="du -sk * | sort -nr | head"
 #alias cdvim='cd $PROGRAMMING_DIR/Tools/Vim'
 
 # Misc aliases
-alias code='code-insiders'
 
 # Git aliases
 alias br='git branch'

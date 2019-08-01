@@ -1,5 +1,21 @@
+
 filetype plugin indent on
 syntax enable
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !mkdir -p ~/.vim/backup ~/.vim/tmp
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('~/.vim/plugged')
+Plug 'mhartington/oceanic-next'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree'
+Plug 'flazz/vim-colorschemes'
+Plug 'kien/ctrlp.vim'
+call plug#end()
 
 if (has("termguicolors"))
   set termguicolors
@@ -62,14 +78,8 @@ endfunction
 
 autocmd BufWritePost *.elm call ShowElmMakeOutput()
 
-if exists ('*minpac#init')
-  " minpac is loaded.
-  set packpath^=~/.vim
-  packadd minpac
-  call minpac#init()
+" minpac is loaded.
+set packpath^=~/.vim
+packadd minpac
+call minpac#init()
 
-  call minpac#add('k-takata/minpac', {'type': 'opt'})
-  call minpac#add('vim-airline/vim-airline')
-  call minpac#add('vim-airline/vim-airline-themes')
-  call minpac#add('scrooloose/nerdtree')
-endif
