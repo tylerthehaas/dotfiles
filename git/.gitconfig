@@ -1,0 +1,7 @@
+[pull]
+	rebase = true
+[user]
+	email = tylerh@articulate.com
+	name = Tyler Haas
+[alias]
+	co = checkout

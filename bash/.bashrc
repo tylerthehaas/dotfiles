@@ -108,10 +108,6 @@ alias cdgitroot='cd `git rev-parse --git-dir`; cd ..'
 alias ls='ls -G'
 alias ll='ls -lh -a'
 
-# See MySQLNotes.txt for steps to start mysqld, the daemon.
-alias mysql=/usr/local/mysql/bin/mysql
-alias mysqladmin=/usr/local/mysql/bin/mysqladmin
-
 # Traceur for ES6
 alias es6='traceur --experimental'
 
@@ -132,21 +128,16 @@ alias sortedpath="ruby -e 'puts ENV[\"PATH\"].split(File::PATH_SEPARATOR).sort'"
 # Kill the process listening on a given port.
 alias klp="kill-listening-process"
 
-# For React Native
-alias rna="react-native run-android"
-alias rni="react-native run-ios"
-
-# O.C. Tanner aliases
-
-alias milestones-start="$TOOLS_DIR/apache-tomcat-8.5.23/bin/startup.sh ; sleep 1; tail -f $TOOLS_DIR/apache-tomcat-8.5.23/logs/catalina.out"
-alias milestones-stop="$TOOLS_DIR/apache-tomcat-8.5.23/bin/shutdown.sh"
-
 #----------------------------------------------------------------------------
 
-# Moves to any directory within O.C. Tanner Projects
-function oct {
-  cd "$HOME/Projects/octanner/$1"
-}
+# Articulate Aliases
+
+alias dc-test-watch='art -on rise-stage docker-compose run --rm app yarn run test --watch'
+
+# Moves to any directory within Articulate Projects
+#function  {
+#  cd "$HOME/Projects/octanner/$1"
+#}
 
  function setTitle {
    Mac OS X Terminal
@@ -155,17 +146,11 @@ function oct {
 # typeset -fx setTitle
 # alias st=setTitle
 
-#source ~/.nvm/nvm.sh
 ctags=/usr/local/bin/ctags
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+export NPM_TOKEN=`grep "registry.npmjs.org" $HOME/.npmrc | awk -F '=' '{print $2}'`
+echo 'finished loading'
 
-alias java8='export JAVA_HOME=$(/usr/libexec/java_home -v 1.8);export
-PATH=$JAVA_HOME/bin:/Users/cameron.shellum/apps/lien:$PATH'
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
-alias java7='export JAVA_HOME=$(/usr/libexec/java_home -v 1.7);export
-PATH=$JAVA_HOME/bin:/Users/cameron.shellum/apps/lien:$PATH'
-
-export java8
-alias config='/usr/bin/git --git-dir=/Users/tyler.haas/.cfg/ --work-tree=/Users/tyler.haas'

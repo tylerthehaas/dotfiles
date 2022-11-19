@@ -61,6 +61,7 @@ ZSH_THEME="lambda-mod"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  asdf
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -69,6 +70,17 @@ source $ZSH/oh-my-zsh.sh
 
 bindkey '^ ' forward-word
 
+# AUTOCOMPLETION
+
+# initialize autocompletion
+autoload -U compinit && compinit
+
+# history setup
+setopt SHARE_HISTORY
+HISTFILE=$HOME/.zhistory
+SAVEHIST=1000
+HISTSIZE=999
+setopt HIST_EXPIRE_DUPS_FIRST
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -104,6 +116,16 @@ source $HOME/.bash_profile
 export PATH="$PATH:$HOME/.rvm/bin"
 export PATh="$PATH:$HOME/bin"
 
-# set nvm directory
-# export NVM_DIR="$HOME/.nvm"
-# . "/usr/local/opt/nvm/nvm.sh"
+# set asdf directory
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+
+eval $(thefuck --alias)
+
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+export PUPPETEER_EXECUTABLE_PATH=`which chromium`
+
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+
