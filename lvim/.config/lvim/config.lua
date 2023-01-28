@@ -10,7 +10,7 @@ an executable
 
 -- general
 lvim.log.level = "warn"
-lvim.format_on_save.enabled = false
+lvim.format_on_save.enabled = true
 lvim.colorscheme = "lunar"
 -- vim.opt.relativenumber = true
 -- to disable icons and use a minimalist setup, uncomment the following
@@ -146,8 +146,12 @@ lvim.builtin.treesitter.highlight.enable = true
 -- }
 
 -- -- set additional linters
--- local linters = require "lvim.lsp.null-ls.linters"
--- linters.setup {
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+  {
+    command = "eslint",
+    filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
+  }
 --   { command = "flake8", filetypes = { "python" } },
 --   {
 --     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
@@ -161,15 +165,35 @@ lvim.builtin.treesitter.highlight.enable = true
 --     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
 --     filetypes = { "javascript", "python" },
 --   },
--- }
+}
 
 -- Additional Plugins
--- lvim.plugins = {
+lvim.plugins = {
+  {
+    "tpope/vim-fugitive",
+    cmd = {
+      "G",
+      "Git",
+      "Gdiffsplit",
+      "Gread",
+      "Gwrite",
+      "Ggrep",
+      "GMove",
+      "GDelete",
+      "GBrowse",
+      "GRemove",
+      "GRename",
+      "Glgrep",
+      "Gedit"
+    },
+    ft = {"fugitive"},
+    requires = "tpope/vim-rhubarb"
+  },
 --     {
 --       "folke/trouble.nvim",
 --       cmd = "TroubleToggle",
 --     },
--- }
+}
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- vim.api.nvim_create_autocmd("BufEnter", {
