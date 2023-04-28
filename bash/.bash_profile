@@ -44,6 +44,8 @@ set editing-mode vi # for vi-mode command-line editing and all utilities that us
 export EDITOR=lvim
 export VISUAL=lvim
 
+bindkey '^r' history-incremental-search-backward
+
 # Don't retain duplicate commands in history.
 export HISTCONTROL=ignoredups
 

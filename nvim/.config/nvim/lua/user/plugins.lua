@@ -60,6 +60,7 @@ return packer.startup(function(use)
   use "folke/which-key.nvim"
   use "tpope/vim-surround"
   use "tpope/vim-repeat"
+  use "christoomey/vim-tmux-navigator"
 
   -- Colorschemes
   use "Julpikar/night-owl.nvim"

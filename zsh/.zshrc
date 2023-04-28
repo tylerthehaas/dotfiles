@@ -82,6 +82,9 @@ SAVEHIST=1000
 HISTSIZE=999
 setopt HIST_EXPIRE_DUPS_FIRST
 
+# zoxide
+eval "$(zoxide init zsh)"
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
@@ -108,8 +111,19 @@ setopt HIST_EXPIRE_DUPS_FIRST
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-export PATH=$PATH:/Users/tyler.haas/.appreciatekit/bin
 
+# tat: tmux attach
+function tat {
+  name=$(basename `pwd` | sed -e 's/\.//g')
+
+  if tmux ls 2>&1 | grep "$name"; then
+    tmux attach -t "$name"
+  elif [ -f .envrc ]; then
+    direnv exec / tmux new-session -s "$name"
+  else
+    tmux new-session -s "$name"
+  fi
+}
 source $HOME/.bash_profile
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
@@ -125,7 +139,7 @@ eval $(thefuck --alias)
 
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_EXECUTABLE_PATH=`which chromium`
+export FONT_AWESOME_NPM_AUTH_TOKEN=C1BAC0FA-1B2B-40D9-891D-8098DDCAB18F
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
-

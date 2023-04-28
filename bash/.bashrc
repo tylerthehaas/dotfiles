@@ -32,27 +32,7 @@ echo running .bashrc
 
 alias bigfiles="find . -type f -size +1000k -exec ls -lk {} \; | awk '{print \$5, \$9}' | sort -nr +1 | head"
 alias bigdirs="du -sk * | sort -nr | head"
-
-#alias cdangular='cd $JAVASCRIPT_DIR/AngularJS'
-#alias cdbmx='cd $BMX_DIR'
-#alias cddropbox='cd $DROPBOX_DIR'
-#alias cdjava='cd $JAVA_DIR'
-#alias cdjavascript='cd $JAVASCRIPT_DIR'
-#alias cdjug='cd $JAVA_DIR/JUG'
-#alias cdjq='cd $JQUERY_DIR'
-#alias cdjs='cd $JAVASCRIPT_DIR'
-#alias cdlanguages='cd $LANGUAGES_DIR'
-#alias cdmaritz='cd $MARITZ_DIR'
-#alias cdmyoci='cd $MYOCI_DIR'
-#alias cdnode='cd $JAVASCRIPT_DIR/Node.js'
-#alias cdnotes='cd ~/MyUnixEnv/notes'
-#alias cdoci='cd $OCI_DIR'
-#alias cdprogramming='cd $PROGRAMMING_DIR'
-#alias cdrga='cd $RGA_DIR'
-#alias cdruby='cd $RUBY_DIR'
-#alias cdsett='cd $SETT_DIR'
-#alias cdtraining='cd $TRAINING_DIR'
-#alias cdvim='cd $PROGRAMMING_DIR/Tools/Vim'
+alias vim="lvim"
 
 # Misc aliases
 
