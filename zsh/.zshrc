@@ -140,6 +140,8 @@ eval $(thefuck --alias)
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_EXECUTABLE_PATH=`which chromium`
 export FONT_AWESOME_NPM_AUTH_TOKEN=C1BAC0FA-1B2B-40D9-891D-8098DDCAB18F
+export DOCKER_CLIENT_TIMEOUT=240
+export COMPOSE_HTTP_TIMEOUT=240
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"

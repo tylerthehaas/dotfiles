@@ -39,7 +39,7 @@ alias vim="lvim"
 # Git aliases
 alias br='git branch'
 alias nbr='git checkout -b'
-alias dbr='git branch | grep -v "master" | xargs git branch -D'
+alias dbr='git branch | grep -v "main" | xargs git branch -D'
 alias ci='git commit -av'
 alias co='git checkout'
 alias lg='git log -p'
