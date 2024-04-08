@@ -94,7 +94,7 @@ eval "$(zoxide init zsh)"
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
-#   export EDITOR='mvim'
+#   export EDITOR='lvim'
 # fi
 
 # Compilation flags
@@ -124,24 +124,14 @@ function tat {
     tmux new-session -s "$name"
   fi
 }
-source $HOME/.bash_profile
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-export PATh="$PATH:$HOME/bin"
+# mise 
+eval "$(/Users/tylerhaas/.local/bin/mise activate zsh)"
 
-# set asdf directory
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
-
-source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
-
+# thefuck
 eval $(thefuck --alias)
-
-export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-export PUPPETEER_EXECUTABLE_PATH=`which chromium`
-export FONT_AWESOME_NPM_AUTH_TOKEN=C1BAC0FA-1B2B-40D9-891D-8098DDCAB18F
-export DOCKER_CLIENT_TIMEOUT=240
-export COMPOSE_HTTP_TIMEOUT=240
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+
+source $HOME/.bash_profile

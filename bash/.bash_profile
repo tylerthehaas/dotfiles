@@ -26,10 +26,6 @@ export JAVASCRIPT_DIR=$LANGUAGES_DIR/javascript
 export JQUERY_DIR=$JAVASCRIPT_DIR/jquery
 export TOOLS_DIR=$HOME/tools
 
-# asdf settings
-. $(brew --prefix asdf)/libexec/asdf.sh
-. $(brew --prefix asdf)/etc/bash_completion.d/asdf.bash
-
 # fzf settings
 export FZF_DEFAULT_COMMAND='rg --files --follow --no-ignore-vcs --hidden -g "!{node_modules/*,.git/*}"'
 
@@ -55,3 +51,4 @@ export PATH=$HOME/.cargo/bin:$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:$
 export TERM=xterm-256color
 
 source ~/.bashrc
+. "$HOME/.cargo/env"

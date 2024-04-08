@@ -191,7 +191,7 @@ lvim.plugins = {
       "Gedit"
     },
     ft = { "fugitive" },
-    requires = "tpope/vim-rhubarb"
+    dependencies = "tpope/vim-rhubarb"
   }
 }
 

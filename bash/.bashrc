@@ -114,23 +114,18 @@ alias klp="kill-listening-process"
 
 alias dc-test-watch='art -on rise-stage docker-compose run --rm app yarn run test --watch'
 
-# Moves to any directory within Articulate Projects
-#function  {
-#  cd "$HOME/Projects/octanner/$1"
-#}
-
  function setTitle {
    Mac OS X Terminal
    echo -ne "\e]2;$@\a\e]1;$@\a";
  }
-# typeset -fx setTitle
-# alias st=setTitle
 
 ctags=/usr/local/bin/ctags
 
-export NPM_TOKEN=`grep "registry.npmjs.org" $HOME/.npmrc | awk -F '=' '{print $2}'`
+# export NPM_TOKEN=`grep "registry.npmjs.org" $HOME/.npmrc | awk -F '=' '{print $2}'`
 echo 'finished loading'
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
+
+. "$HOME/.cargo/env"
