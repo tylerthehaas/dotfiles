@@ -126,7 +126,7 @@ function tat {
 }
 
 # mise 
-eval "$(/Users/tylerhaas/.local/bin/mise activate zsh)"
+eval "$(/opt/homebrew/bin/mise activate zsh)"
 
 # thefuck
 eval $(thefuck --alias)
