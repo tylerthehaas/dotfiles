@@ -11,8 +11,10 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = true
-lvim.colorscheme = "lunar"
--- vim.opt.relativenumber = true
+lvim.colorscheme = "nightfox"
+
+vim.opt.relativenumber = true
+
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -136,18 +138,29 @@ lvim.builtin.treesitter.highlight.enable = true
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 -- local formatters = require "lvim.lsp.null-ls.formatters"
 -- formatters.setup {
---   { command = "black", filetypes = { "python" } },
---   { command = "isort", filetypes = { "python" } },
---   {
---     -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
---     command = "prettier",
---     ---@usage arguments to pass to the formatter
---     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
---     extra_args = { "--print-with", "100" },
---     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
---     filetypes = { "typescript", "typescriptreact" },
---   },
--- }
+-- {
+-- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+-- command = "prettier",
+---@usage arguments to pass to the formatter
+-- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+-- extra_args = { "--print-with", "100" },
+---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
+-- filetypes = { "typescript", "typescriptreact" },
+-- debug = true,
+-- },
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup {
+  { name = "black" },
+  {
+    name = "prettier",
+    ---@usage arguments to pass to the formatter
+    -- these cannot contain whitespace
+    -- options such as `--line-width 80` become either `{"--line-width", "80"}` or `{"--line-width=80"}`
+    args = { "--print-width", "100" },
+    ---@usage only start in these filetypes, by default it will attach to all filetypes it supports
+    filetypes = { "typescript", "typescriptreact" },
+  },
+}
 
 -- -- set additional linters
 local linters = require "lvim.lsp.null-ls.linters"
@@ -173,6 +186,17 @@ linters.setup {
 
 -- Additional Plugins
 lvim.plugins = {
+  { "EdenEast/nightfox.nvim" },
+  {
+    "oxfist/night-owl.nvim",
+    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      -- load the colorscheme here
+      vim.cmd.colorscheme("night-owl")
+    end,
+  },
+  { "nvim-treesitter/nvim-treesitter-context" },
   {
     "tpope/vim-fugitive",
     cmd = {
