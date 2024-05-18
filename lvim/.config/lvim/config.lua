@@ -187,6 +187,10 @@ linters.setup {
 -- Additional Plugins
 lvim.plugins = {
   {
+    "christoomey/vim-tmux-navigator",
+    lazy = false,
+  },
+  {
     "nvim-neotest/neotest",
     dependencies = {
       "nvim-neotest/neotest-go",
