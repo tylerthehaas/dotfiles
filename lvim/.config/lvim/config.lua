@@ -11,9 +11,10 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = true
-lvim.colorscheme = "nightfox"
+lvim.colorscheme = "catppuccin-mocha"
 
 vim.opt.relativenumber = true
+vim.g.raindbow_active = 1
 
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
@@ -118,6 +119,14 @@ lvim.builtin.treesitter.highlight.enable = true
 -- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
 -- local opts = {} -- check the lspconfig documentation for a list of all possible options
 -- require("lvim.lsp.manager").setup("pyright", opts)
+local lspManager = require("lvim.lsp.manager")
+lspManager.setup("tsserver", {
+  init_options = {
+    preferences = {
+      disableSuggestions = true,
+    }
+  }
+})
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
 -- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
@@ -187,6 +196,16 @@ linters.setup {
 -- Additional Plugins
 lvim.plugins = {
   {
+    "HiPhish/rainbow-delimiters.nvim"
+  },
+  {
+    "easymotion/vim-easymotion"
+  },
+  {
+    "tpope/vim-surround",
+    dependencies = { "tpope/vim-repeat" }
+  },
+  {
     "christoomey/vim-tmux-navigator",
     lazy = false,
   },
@@ -218,21 +237,17 @@ lvim.plugins = {
     end,
   },
   {
+    "catppuccin/nvim",
+    lazy = false,
+    name = "catppuccin",
+    priority = 1000
+  },
+  {
     "lalitmee/cobalt2.nvim",
     event = { "ColorSchemePre" }, -- if you want to lazy load
     dependencies = { "tjdevries/colorbuddy.nvim", tag = "v1.0.0" },
     init = function()
       require("colorbuddy").colorscheme("cobalt2")
-    end,
-  },
-  { "EdenEast/nightfox.nvim" },
-  {
-    "oxfist/night-owl.nvim",
-    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-    priority = 1000, -- make sure to load this before all the other start plugins
-    config = function()
-      -- load the colorscheme here
-      vim.cmd.colorscheme("night-owl")
     end,
   },
   { "nvim-treesitter/nvim-treesitter-context" },

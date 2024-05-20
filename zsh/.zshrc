@@ -93,3 +93,11 @@ function tat {
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
 source $HOME/.bash_profile
+
+# pnpm
+export PNPM_HOME="/Users/tylerhaas/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
