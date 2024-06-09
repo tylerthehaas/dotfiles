@@ -19,8 +19,8 @@ export FZF_DEFAULT_COMMAND='rg --files --follow --no-ignore-vcs --hidden -g "!{n
 export GITHUB_USER=tylerthehaas
 
 # Vim settings
-set -o vi # for vi-mode command-line editing
-set editing-mode vi # for vi-mode command-line editing and all utilities that use readline
+#set -o vi # for vi-mode command-line editing
+#set editing-mode vi # for vi-mode command-line editing and all utilities that use readline
 export EDITOR=lvim
 export VISUAL=lvim
 
