@@ -24,7 +24,7 @@ export GITHUB_USER=tylerthehaas
 export EDITOR=lvim
 export VISUAL=lvim
 
-export PATH=$HOME/.cargo/bin:$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/Users/tylerhaas/.local/bin:$PATH
+export PATH=$HOME/.cargo/bin:$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/Users/tylerhaas/.local/bin:$HOME/.bun/bin:$PATH
 
 export TERM=xterm-256color
 

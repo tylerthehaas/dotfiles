@@ -210,22 +210,26 @@ linters.setup {
 -- Additional Plugins
 lvim.plugins = {
   {
+    "Exafunction/windsurf.vim",
+    event = 'BufEnter'
+  },
+  {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {}
   },
-  {
-    "supermaven-inc/supermaven-nvim",
-    config = function()
-      require("supermaven-nvim").setup({
-        keymaps = {
-          accept_suggestion = "<leader>m",
-          clear_suggestion = "<C-]>",
-          accept_word = "<C-j>",
-        }
-      })
-    end,
-  },
+  -- {
+  --   "supermaven-inc/supermaven-nvim",
+  --   config = function()
+  --     require("supermaven-nvim").setup({
+  --       keymaps = {
+  --         accept_suggestion = "<leader>m",
+  --         clear_suggestion = "<C-]>",
+  --         accept_word = "<C-j>",
+  --       }
+  --     })
+  --   end,
+  -- },
   {
     "HiPhish/rainbow-delimiters.nvim"
   },
