@@ -4,8 +4,6 @@ font-family = "Hack Nerd Font Mono"
 font-size = 20
 mouse-hide-while-typing = true
 scrollback-limit = 1000000
-macos-option-as-alt = true
-window-decoration = true
 
 keybind = super+r=new_window
 
@@ -26,4 +24,3 @@ keybind = ctrl+space>p=previous_tab
 keybind = super+r=reload_config
 
 window-save-state = always
-keybind = shift+enter=text:\n

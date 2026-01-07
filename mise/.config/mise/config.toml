@@ -2,3 +2,8 @@
 go = "latest"
 node = "latest"
 bun = "latest"
+python = "3.13"
+neovim = "latest"
+
+[settings]
+python_compile = true

@@ -27,5 +27,8 @@ export VISUAL=lvim
 export PATH=$HOME/.cargo/bin:$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/Users/tylerhaas/.local/bin:$HOME/.bun/bin:$PATH
 
 export TERM=xterm-256color
+export GOPATH=$HOME/go
+export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
+source ~/.secrets
 source ~/.bashrc

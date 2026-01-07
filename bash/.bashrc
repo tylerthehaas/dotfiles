@@ -44,8 +44,9 @@ alias cdgitroot='cd `git rev-parse --git-dir`; cd ..'
 
 # Display directories and executables in different colors.
 #alias ls='ls --color=tty'
-alias ls='ls -G'
-alias ll='ls -lh -a'
+alias ls='eza -1 -a'
+alias ll='eza -l -a'
+alias lt='eza -T -L3 -a --git-ignore --ignore-glob=".jj"'
 
 # For a nicely formatted dump of any path delimited with colons ...
 # To use this enter "echo $PATH | nicepath".
