@@ -62,6 +62,7 @@ path=(
   $HOME/.local/share/mise/shims
   $HOME/.local/bin
   $HOME/bin
+  $HOME/.cache/.bun/bin
   /opt/homebrew/bin
   /usr/local/bin
   $path
@@ -110,11 +111,12 @@ if _has zoxide; then
     alias zz="z -"'
 fi
 
-# starship prompt (deferred)
+# === STARSHIP PROMPT (DO NOT DEFER) ===
 if _has starship; then
-  _defer "_cache_eval 'starship' 'starship init zsh --print-full-init'"
+  # We still use _cache_eval for speed, but we don't _defer it
+  _cache_eval 'starship' 'starship init zsh --print-full-init'
 else
-  # Fallback to simple prompt if Starship not available
+  # Fallback to simple prompt
   autoload -Uz vcs_info
   autoload -Uz add-zsh-hook
   add-zsh-hook precmd vcs_info
@@ -273,8 +275,8 @@ alias c="pbcopy"
 alias gbd="git-branch-delete interactive"
 
 # Claude AI
-alias claude="~/.claude/local/claude"
-alias cc="cd ~/PAI && claude"
+alias claude="$HOME/.local/bin/claude"
+alias cc="cd $HOME/PAI && claude"
 
 # Zoxide aliases (cdi, zz) defined in deferred init block above
 # Set ZOXIDE_REPLACE_CD=1 in .zshenv to also replace cd with z
@@ -409,16 +411,37 @@ typeset -A ZSH_HIGHLIGHT_STYLES=(
   [default]='fg=#f8f8f2' [cursor]='standout'
 )
 
-# Single defer for both plugins (syntax highlighting must be last)
+# === COMPLETION SETTINGS ===
+# Move these OUTSIDE defer. They must be set before or during compinit.
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # Case-insensitive completion
+
+autoload -Uz compinit
+compinit
+
+# Single defer for plugins (syntax highlighting must be last)
 _defer '
-  [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && {
-    source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  # Load Autosuggestions
+  [[ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && {
+    source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=#6272a4
     ZSH_AUTOSUGGEST_STRATEGY=(history completion)
     bindkey "^ " autosuggest-accept
   }
-  [[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
-    source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+  # Load fzf-tab
+  if [[ -f "$HOMEBREW_PREFIX/share/fzf-tab/fzf-tab.zsh" ]]; then
+    source "$HOMEBREW_PREFIX/share/fzf-tab/fzf-tab.zsh"
+    
+    # Previews and Dracula colors
+    zstyle ":fzf-tab:*" fzf-flags "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9"
+    zstyle ":fzf-tab:complete:cd:*" fzf-preview "eza -1 --color=always \$realpath"
+    zstyle ":fzf-tab:complete:(cat|vi|vim|lvim|bat):*" fzf-preview "bat --color=always --style=numbers \$realpath"
+  fi
+
+  # Syntax highlighting MUST be last
+  [[ -f "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+    source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 '
 
 # === PERFORMANCE DEBUG (optional) ===
@@ -434,3 +457,12 @@ bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 # bindkey -v
 
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/tylerhaas/.docker/completions $fpath)
+# End of Docker CLI completions
+
+# PAI alias
+alias pai='bun /Users/tylerhaas/.claude/PAI/Tools/pai.ts'
+
+# Pi
+export PATH="/Users/tylerhaas/.local/share/mise/installs/node/24.5.0/bin:$PATH"

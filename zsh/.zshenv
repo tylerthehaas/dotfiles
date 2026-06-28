@@ -10,8 +10,8 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export LANG="${LANG:-en_US.UTF-8}"
 
 # Default programs
-export EDITOR="${EDITOR:-nvim}"
-export VISUAL="${VISUAL:-nvim}"
+export EDITOR="${EDITOR:-lvim}"
+export VISUAL="${VISUAL:-lvim}"
 export PAGER="${PAGER:-less}"
 
 # Homebrew (Apple Silicon)
