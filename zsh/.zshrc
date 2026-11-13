@@ -269,7 +269,7 @@ _has trash && alias del="trash"  # Preferred: macOS Trash (recoverable)
 alias rm="safe-rm"                 # Protected rm with catastrophic pattern blocking
 
 # Editor and clipboard
-alias v="lvim"
+alias v="nvim"
 alias p="pbpaste"
 alias c="pbcopy"
 alias gbd="git-branch-delete interactive"
