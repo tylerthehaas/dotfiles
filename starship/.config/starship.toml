@@ -1,1 +1,54 @@
-../dotfiles/starship/.config/starship.toml
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Ported from the previous oh-my-posh "zen" theme (ohmyposh/.config/ohmyposh/zen.toml).
+# Deliberately uses only plain Unicode (no Nerd Font glyphs) so it renders
+# correctly regardless of the terminal font.
+
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$line_break\
+$character"""
+
+right_format = "$cmd_duration"
+
+continuation_prompt = '[❯❯ ](magenta)'
+
+[directory]
+style = 'blue'
+format = '[$path]($style)'
+truncation_length = 0
+truncate_to_repo = false
+truncation_symbol = ''
+
+[git_branch]
+symbol = ''
+style = '#6c6c6c'
+format = '[ $branch]($style)'
+
+[git_status]
+style = '#6c6c6c'
+format = '([$all_status]($style))([$ahead_behind](cyan))'
+conflicted = ''
+untracked = ''
+stashed = ''
+modified = '*'
+staged = '*'
+renamed = ''
+deleted = ''
+ahead = '⇡'
+behind = '⇣'
+diverged = '⇕'
+up_to_date = ''
+
+[cmd_duration]
+min_time = 5000
+style = 'yellow'
+format = '[$duration]($style)'
+
+[character]
+success_symbol = '[❯](magenta)'
+error_symbol = '[❯](red)'

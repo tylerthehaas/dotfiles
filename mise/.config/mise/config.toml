@@ -4,6 +4,21 @@ node = "latest"
 bun = "latest"
 python = "3.13"
 neovim = "latest"
+ripgrep = "latest"
+fzf = "latest"
+eza = "latest"
+zoxide = "latest"
+starship = "latest"
+lazygit = "latest"
+rust = "latest"
+yarn = "latest"
+helm = "latest"
+postgres = "14"
+gh = "latest"
+glab = "latest"
 
 [settings]
-python_compile = true
+auto_update = true
+
+[settings.python]
+compile = true
