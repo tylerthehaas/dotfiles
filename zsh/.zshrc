@@ -28,11 +28,23 @@ _cache_eval() {
   local cmd="$2"
   local cache_file="${XDG_CACHE_HOME:-$HOME/.cache}/${cmdname}_init.zsh"
 
-  # Refresh cache if missing or older than 7 days
+  # Refresh cache if missing, EMPTY, or older than 7 days.
   # Glob qualifier: #qNmh-168 = modified within 168 hours (7 days * 24h)
-  if [[ ! -f "$cache_file"(#qNmh-168) ]]; then
-    mkdir -p "$(dirname "$cache_file")"
-    eval "$cmd" >| "$cache_file" 2>/dev/null
+  # An empty cache means a previous init failed; never trust it, or the
+  # failure gets pinned for a full week (this is what silently killed the
+  # starship prompt).
+  if [[ ! -s "$cache_file" || ! -f "$cache_file"(#qNmh-168) ]]; then
+    mkdir -p "${cache_file:h}"
+    local tmp="${cache_file}.$$.tmp"
+    # Build into a temp file and only install it if the command actually
+    # succeeded AND produced output, so a failure can't truncate the cache.
+    if eval "$cmd" >| "$tmp" 2>/dev/null && [[ -s "$tmp" ]]; then
+      command mv -f "$tmp" "$cache_file"
+    else
+      command rm -f "$tmp"
+      eval "$cmd" 2>/dev/null   # degrade gracefully, cache nothing
+      return
+    fi
   fi
   source "$cache_file"
 }
@@ -87,7 +99,7 @@ fi
 # PAI System paths
 export PROJECTS_DIR="$HOME/Projects"
 export CONSULTING_DIR="$HOME/Consulting"
-export DOTFILES_DIR="$HOME/Projects/dotfiles"
+export DOTFILES_DIR="$HOME/dotfiles"
 export ZSH_CONFIG_DIR="$HOME/.config/zsh"
 
 # Source secrets if present (not compiled for security)
@@ -113,6 +125,20 @@ fi
 
 # === STARSHIP PROMPT (DO NOT DEFER) ===
 if _has starship; then
+  # starship's init wraps any existing zle-keymap-select widget. It is not
+  # idempotent: re-running it (`source ~/.zshrc`) wraps its own wrapper, and by
+  # the third run the wrapper calls itself, so every vi-mode switch fails with
+  # "maximum nested function level reached". Undo the previous run's wrapping
+  # first, restoring whatever widget starship originally wrapped (if any).
+  if [[ ${widgets[zle-keymap-select]-} == user:starship_* ]]; then
+    if [[ -n ${__starship_preserved_zle_keymap_select-} && $__starship_preserved_zle_keymap_select != starship_* ]]; then
+      zle -N zle-keymap-select "$__starship_preserved_zle_keymap_select"
+    else
+      zle -D zle-keymap-select
+    fi
+  fi
+  unset __starship_preserved_zle_keymap_select
+
   # We still use _cache_eval for speed, but we don't _defer it
   _cache_eval 'starship' 'starship init zsh --print-full-init'
 else
@@ -253,13 +279,14 @@ if _has eza; then
   alias ll="eza -lh --icons --group-directories-first --no-user"
   alias la="eza -a --icons --group-directories-first --no-user"
   alias tree="eza --tree --icons"
-else
+elif _has lsd; then
   # Fallback to lsd if eza not available
   alias l="lsd -lah --total-size"
   alias ll="lsd -lh"
 fi
 
 # Modern Rust-based tool aliases (consolidated _has checks)
+_has bat && alias cat="bat"
 _has yazi && alias y="yazi"
 _has procs && alias ps="procs"
 _has duf && alias df="duf"
@@ -269,13 +296,13 @@ _has trash && alias del="trash"  # Preferred: macOS Trash (recoverable)
 alias rm="safe-rm"                 # Protected rm with catastrophic pattern blocking
 
 # Editor and clipboard
-alias v="lvim"
+alias v="nvim"
 alias p="pbpaste"
 alias c="pbcopy"
 alias gbd="git-branch-delete interactive"
 
 # Claude AI
-alias claude="$HOME/.local/bin/claude"
+# alias claude="/opt/homebrew/bin/claude"
 alias cc="cd $HOME/PAI && claude"
 
 # Zoxide aliases (cdi, zz) defined in deferred init block above
@@ -344,20 +371,6 @@ if _has fzf; then
 fi
 
 # === LAZY LOADS (STARTUP) ===
-# System update function - calls optimized update-system script
-up() {
-  local cmd="${1:-full}"
-  # Map 'all' to 'full' for convenience
-  [[ "$cmd" == "all" ]] && cmd="full"
-
-  if [[ -x "$DOTFILES_DIR/bin/update-system" ]]; then
-    "$DOTFILES_DIR/bin/update-system" "$cmd"
-  else
-    echo "Error: update-system script not found or not executable"
-    return 1
-  fi
-}
-
 # Load project functions only when needed
 proj() {
   source "$ZSH_CONFIG_DIR/projects.zsh" 2>/dev/null || {
@@ -373,10 +386,14 @@ fabric() {
   if [[ -f "$HOME/.config/fabric/fabric-bootstrap.inc" ]]; then
     source "$HOME/.config/fabric/fabric-bootstrap.inc"
   fi
+  # Homebrew installs the binary as 'fabric-ai' (plain 'fabric' in brew is an
+  # unrelated SSH tool); 'go install' names it 'fabric'. Accept either.
   if _has fabric; then
     command fabric "$@"
+  elif _has fabric-ai; then
+    command fabric-ai "$@"
   else
-    echo "Error: fabric not found in PATH" >&2
+    echo "Error: fabric not found in PATH (looked for 'fabric' and 'fabric-ai')" >&2
     return 1
   fi
 }
@@ -384,14 +401,24 @@ fabric() {
 # Fabric helper functions - lazy loaded via wrapper
 # Available: smart-commit, ai-commit, doc-code, get-todos, list-custom-patterns
 _load_fabric_helpers() {
+  local helpers="$ZSH_CONFIG_DIR/fabric-helpers"
+  # Check BEFORE unfunction: the wrappers are the only handle on these five
+  # commands, so tearing them down ahead of a failed source loses all of them
+  # for the rest of the session.
+  if [[ ! -r "$helpers" ]]; then
+    print -u2 "Error: fabric-helpers not found at $helpers"
+    return 1
+  fi
   unfunction _load_fabric_helpers smart-commit ai-commit doc-code get-todos list-custom-patterns 2>/dev/null
-  source "$DOTFILES_DIR/bin/fabric-helpers"
+  source "$helpers"
 }
-smart-commit() { _load_fabric_helpers; smart-commit "$@" }
-ai-commit() { _load_fabric_helpers; ai-commit "$@" }
-doc-code() { _load_fabric_helpers; doc-code "$@" }
-get-todos() { _load_fabric_helpers; get-todos "$@" }
-list-custom-patterns() { _load_fabric_helpers; list-custom-patterns "$@" }
+# '|| return' is required: without it a failed load re-enters the still-defined
+# wrapper and recurses forever.
+smart-commit() { _load_fabric_helpers || return; smart-commit "$@" }
+ai-commit() { _load_fabric_helpers || return; ai-commit "$@" }
+doc-code() { _load_fabric_helpers || return; doc-code "$@" }
+get-todos() { _load_fabric_helpers || return; get-todos "$@" }
+list-custom-patterns() { _load_fabric_helpers || return; list-custom-patterns "$@" }
 
 # === ZSH PLUGINS (DEFERRED) ===
 # Autosuggestions + Syntax highlighting loaded together (single defer, fewer file checks)
@@ -413,7 +440,9 @@ typeset -A ZSH_HIGHLIGHT_STYLES=(
 
 # === COMPLETION SETTINGS ===
 # Move these OUTSIDE defer. They must be set before or during compinit.
-zstyle ':completion:*' menu select
+# 'menu yes' makes fzf-tab open fzf on the FIRST Tab. With 'menu no' (fzf-tab's
+# default) the first Tab only inserts the shared prefix and a second Tab opens fzf.
+zstyle ':completion:*' menu yes
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # Case-insensitive completion
 
 autoload -Uz compinit
@@ -421,6 +450,21 @@ compinit
 
 # Single defer for plugins (syntax highlighting must be last)
 _defer '
+  # Load fzf-tab (brew install fzf-tab). It must come after compinit but
+  # BEFORE any plugin that wraps widgets (autosuggestions, syntax highlighting).
+  # Warn instead of silently skipping, so a missing install is noticed.
+  if [[ -f "$HOMEBREW_PREFIX/share/fzf-tab/fzf-tab.zsh" ]]; then
+    source "$HOMEBREW_PREFIX/share/fzf-tab/fzf-tab.zsh"
+
+    # Previews and Dracula colors. cd is aliased to zoxide (z), so its
+    # completion context is "z", not "cd"; cover both.
+    zstyle ":fzf-tab:*" fzf-flags "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9"
+    zstyle ":fzf-tab:complete:(cd|z|__zoxide_z):*" fzf-preview "eza -1 --color=always \$realpath"
+    zstyle ":fzf-tab:complete:(cat|vi|vim|nvim|v|bat):*" fzf-preview "bat --color=always --style=numbers \$realpath"
+  else
+    print -u2 "zshrc: fzf-tab not found; Tab completion will not use fzf (brew install fzf-tab)"
+  fi
+
   # Load Autosuggestions
   [[ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && {
     source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
@@ -428,16 +472,6 @@ _defer '
     ZSH_AUTOSUGGEST_STRATEGY=(history completion)
     bindkey "^ " autosuggest-accept
   }
-
-  # Load fzf-tab
-  if [[ -f "$HOMEBREW_PREFIX/share/fzf-tab/fzf-tab.zsh" ]]; then
-    source "$HOMEBREW_PREFIX/share/fzf-tab/fzf-tab.zsh"
-    
-    # Previews and Dracula colors
-    zstyle ":fzf-tab:*" fzf-flags "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9"
-    zstyle ":fzf-tab:complete:cd:*" fzf-preview "eza -1 --color=always \$realpath"
-    zstyle ":fzf-tab:complete:(cat|vi|vim|lvim|bat):*" fzf-preview "bat --color=always --style=numbers \$realpath"
-  fi
 
   # Syntax highlighting MUST be last
   [[ -f "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
@@ -462,7 +496,7 @@ fpath=(/Users/tylerhaas/.docker/completions $fpath)
 # End of Docker CLI completions
 
 # PAI alias
-alias pai='bun /Users/tylerhaas/.claude/PAI/Tools/pai.ts'
+# alias pai='bun /Users/tylerhaas/.claude/PAI/Tools/pai.ts'
 
 # Pi
 export PATH="/Users/tylerhaas/.local/share/mise/installs/node/24.5.0/bin:$PATH"

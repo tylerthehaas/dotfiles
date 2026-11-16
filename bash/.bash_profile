@@ -21,8 +21,8 @@ export GITHUB_USER=tylerthehaas
 # Vim settings
 #set -o vi # for vi-mode command-line editing
 #set editing-mode vi # for vi-mode command-line editing and all utilities that use readline
-export EDITOR=lvim
-export VISUAL=lvim
+export EDITOR=nvim
+export VISUAL=nvim
 
 export PATH=$HOME/.cargo/bin:$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/Users/tylerhaas/.local/bin:$HOME/.bun/bin:$PATH
 

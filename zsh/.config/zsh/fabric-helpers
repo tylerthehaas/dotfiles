@@ -1,0 +1,160 @@
+#!/usr/bin/env zsh
+# fabric-helpers - Fabric-backed git and code helpers.
+#
+# Sourced lazily by _load_fabric_helpers() in .zshrc; not executed directly.
+# Defines: smart-commit, ai-commit, doc-code, get-todos, list-custom-patterns
+#
+# Requires Fabric: brew install fabric-ai && fabric-ai --setup
+#   (brew names the binary "fabric-ai"; "go install" names it "fabric" - both work)
+#
+# Pattern names are overridable so you can point these at your own patterns
+# without editing this file. Defaults are upstream Fabric patterns.
+: ${FABRIC_PATTERN_COMMIT:=create_git_diff_commit}
+: ${FABRIC_PATTERN_EXPLAIN_CODE:=explain_code}
+: ${FABRIC_PATTERN_SUMMARIZE:=summarize}
+: ${FABRIC_CUSTOM_PATTERNS_DIR:=$HOME/.config/fabric/custom_patterns}
+
+# --- internals ---------------------------------------------------------------
+
+# Resolve the Fabric binary. Homebrew's 'fabric-ai' formula installs it as
+# 'fabric-ai' (plain 'fabric' in brew is an unrelated SSH tool); 'go install'
+# gives you 'fabric'. Support both, and never guess.
+_fabric_require() {
+  if (( $+commands[fabric] )); then
+    _FABRIC_BIN=fabric
+  elif (( $+commands[fabric-ai] )); then
+    _FABRIC_BIN=fabric-ai
+  else
+    print -u2 "fabric-helpers: Fabric is not on PATH (looked for 'fabric' and 'fabric-ai')."
+    print -u2 "  install:  brew install fabric-ai && fabric-ai --setup"
+    return 1
+  fi
+  return 0
+}
+
+# Read the staged diff, or explain why there isn't one.
+_fabric_staged_diff() {
+  command git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+    print -u2 "${1}: not inside a git repository"; return 1
+  }
+  local diff
+  diff=$(command git diff --cached) || return 1
+  [[ -n $diff ]] || {
+    print -u2 "${1}: nothing staged - 'git add' your changes first"; return 1
+  }
+  print -r -- "$diff"
+}
+
+# Generate a commit message from the staged diff.
+_fabric_commit_msg() {
+  local caller=$1 diff msg
+  diff=$(_fabric_staged_diff "$caller") || return 1
+  msg=$(print -r -- "$diff" | $_FABRIC_BIN -p "$FABRIC_PATTERN_COMMIT") || {
+    print -u2 "${caller}: fabric failed (pattern: $FABRIC_PATTERN_COMMIT)"; return 1
+  }
+  [[ -n ${msg//[[:space:]]/} ]] || {
+    print -u2 "${caller}: fabric returned an empty message"; return 1
+  }
+  print -r -- "$msg"
+}
+
+# --- commands ----------------------------------------------------------------
+
+# Generate a commit message, show it, and commit only after you confirm.
+smart-commit() {
+  _fabric_require || return 1
+  local msg
+  msg=$(_fabric_commit_msg smart-commit) || return 1
+
+  print -r -- "$msg"
+  print
+  local reply
+  if read -q "reply?Commit with this message? [y/N] "; then
+    print
+    print -r -- "$msg" | command git commit -F -
+  else
+    print
+    print "smart-commit: aborted, nothing committed"
+    return 1
+  fi
+}
+
+# Same, but commits immediately with no prompt.
+ai-commit() {
+  _fabric_require || return 1
+  local msg
+  msg=$(_fabric_commit_msg ai-commit) || return 1
+  print -r -- "$msg" | command git commit -F -
+}
+
+# Explain/document code. Takes files, or reads stdin.
+doc-code() {
+  _fabric_require || return 1
+
+  if (( $# == 0 )); then
+    if [[ -t 0 ]]; then
+      print -u2 "usage: doc-code <file>...   |   doc-code < file   |   ... | doc-code"
+      return 1
+    fi
+    $_FABRIC_BIN -p "$FABRIC_PATTERN_EXPLAIN_CODE"
+    return
+  fi
+
+  local f rc=0
+  for f in "$@"; do
+    if [[ ! -r $f ]]; then
+      print -u2 "doc-code: cannot read '$f'"; rc=1; continue
+    fi
+    (( $# > 1 )) && print "===== $f ====="
+    $_FABRIC_BIN -p "$FABRIC_PATTERN_EXPLAIN_CODE" < "$f" || rc=1
+  done
+  return $rc
+}
+
+# Collect TODO-style markers and summarise them. Defaults to the current tree.
+get-todos() {
+  local marker_re='TODO|FIXME|HACK|XXX|BUG'
+  local -a search_paths
+  search_paths=( "${@:-.}" )
+
+  local hits
+  if (( $+commands[rg] )); then
+    hits=$(command rg --no-heading --line-number --color=never \
+             --glob '!.git' -e "$marker_re" -- "${search_paths[@]}" 2>/dev/null)
+  else
+    hits=$(command grep -rnE --exclude-dir=.git -e "$marker_re" -- "${search_paths[@]}" 2>/dev/null)
+  fi
+
+  if [[ -z $hits ]]; then
+    print "get-todos: no TODO/FIXME/HACK/XXX/BUG markers found"
+    return 0
+  fi
+
+  # Fabric is optional here - the raw list is already useful without it.
+  if _fabric_require 2>/dev/null; then
+    print -r -- "$hits" | $_FABRIC_BIN -p "$FABRIC_PATTERN_SUMMARIZE"
+  else
+    print -r -- "$hits"
+  fi
+}
+
+# Show patterns you've added yourself, rather than all ~256 upstream ones.
+list-custom-patterns() {
+  _fabric_require || return 1
+
+  if [[ -d $FABRIC_CUSTOM_PATTERNS_DIR ]]; then
+    local -a custom
+    custom=( $FABRIC_CUSTOM_PATTERNS_DIR/*(N/:t) )
+    if (( ${#custom} == 0 )); then
+      print "no custom patterns in $FABRIC_CUSTOM_PATTERNS_DIR"
+      return 0
+    fi
+    print "custom patterns in $FABRIC_CUSTOM_PATTERNS_DIR:"
+    printf '  %s\n' "${custom[@]}"
+  else
+    print -u2 "list-custom-patterns: no custom pattern dir at $FABRIC_CUSTOM_PATTERNS_DIR"
+    print -u2 "(set FABRIC_CUSTOM_PATTERNS_DIR to point elsewhere)"
+    print -u2 "falling back to every pattern fabric knows about:"
+    $_FABRIC_BIN -l
+  fi
+}
