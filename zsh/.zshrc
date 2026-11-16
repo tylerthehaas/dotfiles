@@ -460,7 +460,7 @@ _defer '
     # completion context is "z", not "cd"; cover both.
     zstyle ":fzf-tab:*" fzf-flags "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9"
     zstyle ":fzf-tab:complete:(cd|z|__zoxide_z):*" fzf-preview "eza -1 --color=always \$realpath"
-    zstyle ":fzf-tab:complete:(cat|vi|vim|lvim|bat):*" fzf-preview "bat --color=always --style=numbers \$realpath"
+    zstyle ":fzf-tab:complete:(cat|vi|vim|nvim|v|bat):*" fzf-preview "bat --color=always --style=numbers \$realpath"
   else
     print -u2 "zshrc: fzf-tab not found; Tab completion will not use fzf (brew install fzf-tab)"
   fi
