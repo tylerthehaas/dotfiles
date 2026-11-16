@@ -1,5 +1,5 @@
 shell-integration = zsh
-theme = catppuccin-mocha
+theme = catppuccin-mocha.conf
 font-family = "Hack Nerd Font Mono"
 font-size = 20
 mouse-hide-while-typing = true
