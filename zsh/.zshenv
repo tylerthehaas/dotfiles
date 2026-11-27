@@ -10,8 +10,8 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export LANG="${LANG:-en_US.UTF-8}"
 
 # Default programs
-export EDITOR="${EDITOR:-lvim}"
-export VISUAL="${VISUAL:-lvim}"
+export EDITOR="${EDITOR:-nvim}"
+export VISUAL="${VISUAL:-nvim}"
 export PAGER="${PAGER:-less}"
 
 # Homebrew (Apple Silicon)
@@ -24,3 +24,7 @@ export DISABLE_CHPWD_LS=1
 export ZOXIDE_REPLACE_CD=1
 
 . "$HOME/.cargo/env"
+
+# Octopus Deploy (in .zshenv so non-interactive shells, e.g. the Claude MCP server, get it)
+export OCTOPUS_SERVER_URL=https://knowable.octopus.app/
+export OCTOPUS_URL=$OCTOPUS_SERVER_URL

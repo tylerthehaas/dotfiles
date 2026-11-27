@@ -24,3 +24,8 @@ _darcs
 ^/README.*
 ^/LICENSE.*
 ^/COPYING
+
+# agent config: repo docs, not dotfiles to be linked into $HOME
+^/CLAUDE\.md
+^/AGENTS\.md
+^/docs

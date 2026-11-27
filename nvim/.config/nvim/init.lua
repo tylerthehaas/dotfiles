@@ -1,21 +1,13 @@
-require("user.options")
-require("user.keymaps")
-require("user.plugins")
-require("user.colorscheme")
-require("user.cmp")
-require("user.lsp")
-require("user.telescope")
-require("user.treesitter")
-require("user.autopairs")
-require("user.comment")
-require("user.gitsigns")
-require("user.nvim-tree")
-require("user.bufferline")
-require("user.lualine")
-require("user.toggleterm")
-require("user.project")
-require("user.impatient")
-require("user.indentline")
-require("user.alpha")
-require("user.whichkey")
-require("user.autocommands")
+-- Native Neovim config, ported from the LunarVim setup (~/.config/lvim).
+-- Layout:
+--   lua/config/*   options, keymaps, autocmds, commands, lazy bootstrap
+--   lua/plugins/*  lazy.nvim plugin specs (one file per area)
+
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+require("config.options")
+require("config.lazy")
+require("config.keymaps")
+require("config.autocmds")
+require("config.commands")
