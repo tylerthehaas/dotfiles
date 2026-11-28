@@ -53,11 +53,4 @@ return {
     lazy = false,
     opts = { auto_start = true, log_level = "info" },
   },
-  {
-    "Exafunction/windsurf.vim",
-    -- only auto-load once authenticated (`:Codeium Auth`), otherwise it prints
-    -- "No API key found" on every buffer
-    event = vim.fn.filereadable(vim.fn.expand("~/.codeium/config.json")) == 1 and "BufEnter" or nil,
-    cmd = "Codeium",
-  },
 }
