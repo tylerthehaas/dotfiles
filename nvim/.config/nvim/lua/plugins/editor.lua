@@ -245,6 +245,23 @@ return {
     opts = {},
   },
   { "tpope/vim-surround", event = "User FileOpened", dependencies = { "tpope/vim-repeat" } },
-  { "christoomey/vim-tmux-navigator", lazy = false },
+  {
+    "christoomey/vim-tmux-navigator",
+    lazy = false,
+    -- In a Rex pane (not tmux), <C-h/j/k/l> move nvim windows and hand off to Rex at the edge.
+    init = function()
+      if vim.env.REX_BLOCK and not vim.env.TMUX then vim.g.tmux_navigator_no_mappings = 1 end
+    end,
+    config = function()
+      if not (vim.env.REX_BLOCK and not vim.env.TMUX) then return end
+      for key, dir in pairs({ h = "left", j = "down", k = "up", l = "right" }) do
+        vim.keymap.set("n", "<C-" .. key .. ">", function()
+          local win = vim.api.nvim_get_current_win()
+          vim.cmd("wincmd " .. key)
+          if vim.api.nvim_get_current_win() == win then vim.system({ "rex", "focus", dir }) end
+        end, { silent = true, desc = "Window/Rex pane " .. dir })
+      end
+    end,
+  },
   { "folke/todo-comments.nvim", event = "User FileOpened", dependencies = { "nvim-lua/plenary.nvim" }, opts = {} },
 }

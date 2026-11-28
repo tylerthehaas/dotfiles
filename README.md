@@ -50,7 +50,7 @@ brew bundle --file ~/dotfiles/homebrew/.Brewfile
 **4. Link the dotfiles into `$HOME`**
 
 ```bash
-cd ~/dotfiles && stow bash bin eslint ghostty git homebrew kitty mise nvim ohmyposh starship tmux zsh
+cd ~/dotfiles && stow bash bin eslint ghostty git homebrew kitty mise nvim ohmyposh rex starship tmux zsh
 ```
 
 If stow reports a conflict, a real file already exists where it wants to put
